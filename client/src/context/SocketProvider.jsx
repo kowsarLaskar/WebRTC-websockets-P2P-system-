@@ -1,20 +1,28 @@
-import React, { createContext, useContext, useMemo } from 'react'
-import { io } from "socket.io-client";
+import React, { createContext, useContext, useMemo } from 'react';
+import { io } from 'socket.io-client';
 
+// 1. Create Context
 const SocketContext = createContext(null);
 
+// 2. Custom hook to use socket in any component
 export const useSocket = () => {
-    const socket = useContext(SocketContext);
-    return socket;
-}
+  return useContext(SocketContext);
+};
 
-const SocketProvider = (props) => {
-    const socket = useMemo(() => io("video-peers-server.onrender.com/"), []);
-    return (
-        <SocketContext.Provider value={socket}>
-            {props.children}
-        </SocketContext.Provider>
-    )
-}
+// 3. Provider Component
+const SocketProvider = ({ children }) => {
+  // Replace with your actual Render server URL with HTTPS
+  const socket = useMemo(() => {
+    return io("https://video-peers-server.onrender.com", {
+      transports: ['websocket'], // optional: ensures direct websocket usage
+    });
+  }, []);
 
-export default SocketProvider
+  return (
+    <SocketContext.Provider value={socket}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
+
+export default SocketProvider;
